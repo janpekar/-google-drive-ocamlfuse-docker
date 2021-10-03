@@ -6,6 +6,7 @@ RUN apt -y install software-properties-common gpg gnupg-agent firefox xterm
 RUN add-apt-repository ppa:alessandro-strada/ppa
 RUN apt-get update && apt-get -y install google-drive-ocamlfuse \
  && rm -rf /var/lib/apt/lists/*
+#Allow mounts outside docker - needed for -o allow_other under $USER
 RUN sed -i '/user_allow_other/s/^#//' /etc/fuse.conf
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
