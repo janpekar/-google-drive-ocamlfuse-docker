@@ -9,6 +9,9 @@ ENV_VARS+=" --env=UID=$(id -u)"
 VOLUMES+=" --volume=${XSOCK}:${XSOCK}"
 VOLUMES+=" --volume=${XAUTH}:${XAUTH}"
 
+#Umount fuse disk on docker exit
+trap "fusermount -u $(pwd)/volumes/${USER}/googledrive" EXIT
+
 #Allow to access X11
 xauth nlist "$DISPLAY" | sed -e 's/^..../ffff/' | xauth -f "$XAUTH" nmerge -
 #Docker run with fuse enabled and rshared bind to volume to see fuse mounts
@@ -17,3 +20,4 @@ docker run -i -t $VOLUMES $ENV_VARS \
            --cap-add SYS_ADMIN \
            --mount type=bind,source=$(pwd)/volumes/$USER,target=/home/$USER,bind-propagation=rshared \
            google-drive-ocamlfuse:latest
+
